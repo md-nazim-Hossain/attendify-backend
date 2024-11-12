@@ -27,6 +27,8 @@ const employeeSchema = new Schema<
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
+      trim: true,
     },
     photo: {
       type: String,
