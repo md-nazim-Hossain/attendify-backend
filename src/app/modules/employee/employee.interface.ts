@@ -14,22 +14,21 @@ export interface IEmployee {
   password: string;
   passwordChangeAt?: string | Date;
   role: ENUM_EMPLOYEE_ROLE;
-  refereshToken?: string;
   status: boolean;
 }
 
 export interface IEmployeeMethods {
-  isPasswordMatch: (
-    givenPass: string,
-    savePassword: string
-  ) => Promise<boolean>;
+  isPasswordMatch: (password: string) => Promise<boolean>;
   isEmployeeExist: (
     id: string
   ) => Promise<Pick<
     IEmployee,
     'employeeId' | 'password' | 'status' | 'role'
   > | null>;
+  generateRefreshToken: () => string;
+  generateAccessToken: () => string;
 }
+
 export type IEmployeeModel = Model<
   IEmployee,
   Record<string, unknown>,

@@ -7,6 +7,7 @@ import {
 import bcrypt from 'bcrypt';
 import { config } from '../../../config';
 import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
+import jwt, { Secret } from 'jsonwebtoken';
 
 const employeeSchema = new Schema<
   IEmployee,
@@ -58,9 +59,6 @@ const employeeSchema = new Schema<
       required: true,
       enum: Object.values(ENUM_EMPLOYEE_ROLE),
     },
-    refereshToken: {
-      type: String,
-    },
     status: {
       type: Boolean,
       default: true,
@@ -74,11 +72,24 @@ const employeeSchema = new Schema<
   }
 );
 
+employeeSchema.methods.isEmployeeExist = async function (
+  id: string
+): Promise<Pick<
+  IEmployee,
+  'employeeId' | 'password' | 'status' | 'role'
+> | null> {
+  const employee = await Employee.findOne(
+    { id },
+    { status: 1, _id: 1, password: 1, role: 1, employeeId: 1 }
+  ).lean();
+
+  return employee;
+};
+
 employeeSchema.methods.isPasswordMatch = async function (
-  givenPass: string,
-  savePassword: string
+  password: string
 ): Promise<boolean> {
-  return await bcrypt.compare(givenPass, savePassword);
+  return await bcrypt.compare(password.trim(), this.password);
 };
 
 employeeSchema.pre('save', async function (next) {
@@ -89,6 +100,37 @@ employeeSchema.pre('save', async function (next) {
   );
   next();
 });
+
+employeeSchema.methods.generateAccessToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      employeeId: this.employeeId,
+      email: this.email,
+      fullName: this.fullName,
+      role: this.role,
+    },
+    config.jwt.access_token_secret as Secret,
+    {
+      expiresIn: config.jwt.access_token_expiry,
+    }
+  );
+};
+
+employeeSchema.methods.generateRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      employeeId: this.employeeId,
+      role: this.role,
+    },
+    config.jwt.refresh_token_secret as Secret,
+    {
+      expiresIn: config.jwt.refresh_token_expiry,
+    }
+  );
+};
 
 export const Employee = model<IEmployee, IEmployeeModel>(
   'Employee',

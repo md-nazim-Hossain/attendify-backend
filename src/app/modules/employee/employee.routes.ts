@@ -4,7 +4,7 @@ import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
 const router = express.Router();
 
 router.post(
-  '/create-employee',
+  '/add-employee',
   //   validateRequest(),
   auth(ENUM_EMPLOYEE_ROLE.ADMIN)
 );
