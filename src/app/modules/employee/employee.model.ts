@@ -6,6 +6,7 @@ import {
 } from './employee.interface';
 import bcrypt from 'bcrypt';
 import { config } from '../../../config';
+import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
 
 const employeeSchema = new Schema<
   IEmployee,
@@ -55,6 +56,7 @@ const employeeSchema = new Schema<
     role: {
       type: String,
       required: true,
+      enum: Object.values(ENUM_EMPLOYEE_ROLE),
     },
     refereshToken: {
       type: String,

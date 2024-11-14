@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { ITeam, ITeamModel } from './team.interface';
+import { ENUM_TEAM_DESIGNATIONS } from '../../enums/team.enum';
 
 const teamSchema = new Schema<ITeam>(
   {
@@ -10,7 +11,7 @@ const teamSchema = new Schema<ITeam>(
       unique: true,
     },
     designations: {
-      type: [String],
+      type: [Object.values(ENUM_TEAM_DESIGNATIONS)],
       required: true,
     },
     teamLead: {

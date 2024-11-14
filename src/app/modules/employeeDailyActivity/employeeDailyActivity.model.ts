@@ -25,6 +25,7 @@ const employeeDailyActivitySchema = new Schema<
     status: {
       type: String,
       default: ENUM_ACTIVITY_STATUS.QUEUE,
+      enum: Object.values(ENUM_ACTIVITY_STATUS),
     },
   },
   { timestamps: true, toJSON: { virtuals: true } }
