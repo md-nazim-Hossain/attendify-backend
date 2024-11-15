@@ -19,6 +19,8 @@ export interface IPoject {
   teamIds?: Array<Schema.Types.ObjectId | ITeam>;
   teamStatus?: Array<{ _id: Schema.Types.ObjectId; status: ENUM_TEAM_STATUS }>;
   status: ENUM_PROJECT_STATUS;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type IPojectModel = Model<IPoject, Record<string, unknown>>;

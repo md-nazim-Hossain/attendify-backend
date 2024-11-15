@@ -19,6 +19,8 @@ export interface IEmployee {
   passwordChangeAt?: string | Date;
   role: ENUM_EMPLOYEE_ROLE;
   status: boolean;
+  creaedAt: string;
+  updatedAt: string;
 }
 
 export interface IEmployeeFilters {

@@ -8,6 +8,8 @@ export interface ITeam {
   designations: Array<ENUM_TEAM_DESIGNATIONS>;
   teamLead: Schema.Types.ObjectId | IEmployee;
   status: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type ITeamModel = Model<ITeam, Record<string, unknown>>;

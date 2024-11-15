@@ -10,6 +10,8 @@ export interface IEmployeeDailyBreak {
   reason: string;
   type: ENUM_BREAK_TYPE;
   status: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type IEmployeeDailyBreakModel = Model<

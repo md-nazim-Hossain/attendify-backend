@@ -14,6 +14,8 @@ export interface IEmployeeLeaveRequest {
   reviewer?: Schema.Types.ObjectId | IEmployee;
   leaveType: ENUM_LEAVE_TYPE;
   status: ENUM_LEAVE_STATUS;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type IEmployeeLeaveRequestModel = Model<

@@ -8,6 +8,8 @@ export interface IEmployeeDailyActivity {
   activities: string;
   reason?: string;
   status: ENUM_ACTIVITY_STATUS;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type IEmployeeDailyActivityModel = Model<

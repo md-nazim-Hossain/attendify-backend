@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: './.env' });
 
 export const config = {
-  port: process.env.PORT || 3000,
+  port: process.env.PORT || 5000,
   env: process.env.NODE_ENV || 'development',
   default_password: process.env.PASSWORD || '12345678',
   db: {
