@@ -6,7 +6,10 @@ import {
 } from './employee.interface';
 import bcrypt from 'bcrypt';
 import { config } from '../../../config';
-import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
+import {
+  ENUM_EMPLOYEE_GENDER,
+  ENUM_EMPLOYEE_ROLE,
+} from '../../enums/employee.enum';
 import jwt, { Secret } from 'jsonwebtoken';
 
 const employeeSchema = new Schema<
@@ -37,6 +40,13 @@ const employeeSchema = new Schema<
     },
     address: {
       type: String,
+    },
+    phone: {
+      type: String,
+    },
+    gender: {
+      type: String,
+      enum: Object.values(ENUM_EMPLOYEE_GENDER),
     },
     designation: {
       type: String,
