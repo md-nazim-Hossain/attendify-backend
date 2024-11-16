@@ -31,6 +31,16 @@ const employeeDailyActivitySchema = new Schema<
   { timestamps: true, toJSON: { virtuals: true } }
 );
 
+employeeDailyActivitySchema.pre('findOne', async function (next) {
+  this.populate('employeeId');
+  next();
+});
+
+employeeDailyActivitySchema.pre('find', async function (next) {
+  this.populate('employeeId');
+  next();
+});
+
 export const EmployeeDailyActivity = model<
   IEmployeeDailyActivity,
   IEmployeeDailyActivityModel

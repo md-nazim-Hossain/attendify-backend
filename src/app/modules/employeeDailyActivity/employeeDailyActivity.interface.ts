@@ -12,6 +12,12 @@ export interface IEmployeeDailyActivity {
   updatedAt: string;
 }
 
+export interface IEmployeeDailyActivityFilters {
+  searchTerm?: string;
+  status?: ENUM_ACTIVITY_STATUS;
+  employeeId?: string;
+}
+
 export type IEmployeeDailyActivityModel = Model<
   IEmployeeDailyActivity,
   Record<string, unknown>

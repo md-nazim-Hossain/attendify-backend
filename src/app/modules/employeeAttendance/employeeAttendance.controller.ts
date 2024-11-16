@@ -17,6 +17,7 @@ const employeeCheckIn = catchAsync(async (req, res) => {
 
   await EmployeeAttendanceService.employeeCheckIn({
     ...employeeData,
+    employeeId: req.employee?.employeeId,
     ip,
     browser,
     device,

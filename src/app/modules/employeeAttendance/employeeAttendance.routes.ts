@@ -2,6 +2,8 @@ import express from 'express';
 import { EmployeeAttendanceController } from './employeeAttendance.controller';
 import auth from '../../middleware/auth.middleware';
 import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
+import validateRequest from '../../middleware/validateRequest.middleware';
+import { EmployeeAttendanceValidation } from './employeeAttendance.validation';
 
 const router = express.Router();
 
@@ -33,11 +35,13 @@ router.patch(
 
 router.post(
   '/check-in',
+  validateRequest(EmployeeAttendanceValidation.checkInZodSchema),
   auth(EMPLOYEE),
   EmployeeAttendanceController.employeeCheckIn
 );
 router.post(
   '/check-out',
+  validateRequest(EmployeeAttendanceValidation.checkOutZodSchema),
   auth(EMPLOYEE),
   EmployeeAttendanceController.employeeCheckOut
 );

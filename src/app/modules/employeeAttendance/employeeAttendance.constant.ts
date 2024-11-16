@@ -20,4 +20,5 @@ const employeeAttendanceFilterableFields = [
 
 export const EmployeeAttendanceConstant = {
   employeeAttendanceFilterableFields,
+  employeeAttendanceSearchFields,
 };

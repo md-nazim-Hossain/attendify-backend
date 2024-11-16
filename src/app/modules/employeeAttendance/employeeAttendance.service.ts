@@ -77,7 +77,7 @@ const getAllAttendances = async (
 
   if (searchTerm) {
     andConditions.push({
-      $or: EmployeeAttendanceConstant.employeeAttendanceFilterableFields.map(
+      $or: EmployeeAttendanceConstant.employeeAttendanceSearchFields.map(
         (field) => ({
           [field]: {
             $regex: searchTerm,
@@ -136,7 +136,7 @@ const getAllAttendancesByEmployeeId = async (
 
   if (searchTerm) {
     andConditions.push({
-      $or: EmployeeAttendanceConstant.employeeAttendanceFilterableFields.map(
+      $or: EmployeeAttendanceConstant.employeeAttendanceSearchFields.map(
         (field) => ({
           [field]: {
             $regex: searchTerm,
