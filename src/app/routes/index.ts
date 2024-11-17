@@ -5,6 +5,7 @@ import { EmployeeAttendanceRoutes } from '../modules/employeeAttendance/employee
 import { EmployeeDailyActivityRoutes } from '../modules/employeeDailyActivity/employeeDailyActivity.routes';
 import { EmployeeLeaveRequestRoutes } from '../modules/employeeLeaveRequest/employeeLeaveRequest.routes';
 import { TeamRoutes } from '../modules/team/team.routes';
+import { EmployeeDailyBreakRoutes } from '../modules/employeeDailyBreak/employeeDailyBreak.routes';
 
 const router = express.Router();
 
@@ -32,6 +33,10 @@ const moduleRoutes = [
   {
     path: '/team',
     route: TeamRoutes,
+  },
+  {
+    path: '/employee-daily-break',
+    route: EmployeeDailyBreakRoutes,
   },
 ];
 

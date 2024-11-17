@@ -14,6 +14,13 @@ export interface IEmployeeDailyBreak {
   updatedAt: string;
 }
 
+export interface IEmployeeDailyBreakFilters {
+  searchTerm?: string;
+  employeeId?: string;
+  type?: ENUM_BREAK_TYPE;
+  status?: boolean;
+}
+
 export type IEmployeeDailyBreakModel = Model<
   IEmployeeDailyBreak,
   Record<string, unknown>
