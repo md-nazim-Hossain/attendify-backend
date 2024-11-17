@@ -18,6 +18,15 @@ export interface IEmployeeLeaveRequest {
   updatedAt: string;
 }
 
+export interface IEmployeeLeaveRequestFilter {
+  searchTerm?: string;
+  leaveType?: ENUM_LEAVE_TYPE;
+  status?: ENUM_LEAVE_STATUS;
+  employeeId?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
 export type IEmployeeLeaveRequestModel = Model<
   IEmployeeLeaveRequest,
   Record<string, unknown>

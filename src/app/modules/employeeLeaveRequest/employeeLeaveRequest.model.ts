@@ -3,6 +3,10 @@ import {
   IEmployeeLeaveRequest,
   IEmployeeLeaveRequestModel,
 } from './employeeLeaveRequest.interface';
+import {
+  ENUM_LEAVE_STATUS,
+  ENUM_LEAVE_TYPE,
+} from '../../enums/employeeLeaveRequest.enum';
 
 const employeeLeaveRequestSchema = new Schema<
   IEmployeeLeaveRequest,
@@ -33,12 +37,13 @@ const employeeLeaveRequestSchema = new Schema<
     leaveType: {
       type: String,
       required: true,
-      enum: Object.values('leaveType'),
+      enum: Object.values(ENUM_LEAVE_TYPE),
     },
     status: {
       type: String,
       required: true,
-      enum: Object.values('status'),
+      enum: Object.values(ENUM_LEAVE_STATUS),
+      default: ENUM_LEAVE_STATUS.PENDING,
     },
   },
   {
