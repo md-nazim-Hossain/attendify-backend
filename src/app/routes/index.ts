@@ -4,6 +4,7 @@ import { AuthRoutes } from '../modules/auth/auth.routes';
 import { EmployeeAttendanceRoutes } from '../modules/employeeAttendance/employeeAttendance.routes';
 import { EmployeeDailyActivityRoutes } from '../modules/employeeDailyActivity/employeeDailyActivity.routes';
 import { EmployeeLeaveRequestRoutes } from '../modules/employeeLeaveRequest/employeeLeaveRequest.routes';
+import { TeamRoutes } from '../modules/team/team.routes';
 
 const router = express.Router();
 
@@ -27,6 +28,10 @@ const moduleRoutes = [
   {
     path: '/employee-leave-request',
     route: EmployeeLeaveRequestRoutes,
+  },
+  {
+    path: '/team',
+    route: TeamRoutes,
   },
 ];
 

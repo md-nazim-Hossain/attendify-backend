@@ -12,4 +12,10 @@ export interface ITeam {
   updatedAt: string;
 }
 
+export interface ITeamFilters {
+  searchTerm?: string;
+  status?: boolean;
+  name?: string;
+}
+
 export type ITeamModel = Model<ITeam, Record<string, unknown>>;
