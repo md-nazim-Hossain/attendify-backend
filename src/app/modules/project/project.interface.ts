@@ -6,7 +6,7 @@ import {
   ENUM_TEAM_STATUS,
 } from '../../enums/project.enum';
 
-export interface IPoject {
+export interface IProject {
   name: string;
   description: string;
   technologyUsed: Array<string>;
@@ -23,4 +23,13 @@ export interface IPoject {
   updatedAt: string;
 }
 
-export type IPojectModel = Model<IPoject, Record<string, unknown>>;
+export interface IProjectFilters {
+  searchTerm?: string;
+  name?: string;
+  status?: ENUM_PROJECT_STATUS;
+  startDate?: string;
+  endDate?: string;
+  deliveryDate?: string;
+}
+
+export type IPojectModel = Model<IProject, Record<string, unknown>>;

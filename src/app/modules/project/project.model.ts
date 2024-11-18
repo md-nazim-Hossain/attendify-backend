@@ -3,9 +3,9 @@ import {
   ENUM_PROJECT_STATUS,
   ENUM_TEAM_STATUS,
 } from '../../enums/project.enum';
-import { IPoject, IPojectModel } from './project.interface';
+import { IProject, IPojectModel } from './project.interface';
 
-const projectSchema = new Schema<IPoject, Record<string, unknown>>(
+const projectSchema = new Schema<IProject, Record<string, unknown>>(
   {
     name: {
       type: String,
@@ -73,4 +73,4 @@ const projectSchema = new Schema<IPoject, Record<string, unknown>>(
   }
 );
 
-export const Project = model<IPoject, IPojectModel>('Project', projectSchema);
+export const Project = model<IProject, IPojectModel>('Project', projectSchema);

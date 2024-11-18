@@ -6,6 +6,7 @@ import { EmployeeDailyActivityRoutes } from '../modules/employeeDailyActivity/em
 import { EmployeeLeaveRequestRoutes } from '../modules/employeeLeaveRequest/employeeLeaveRequest.routes';
 import { TeamRoutes } from '../modules/team/team.routes';
 import { EmployeeDailyBreakRoutes } from '../modules/employeeDailyBreak/employeeDailyBreak.routes';
+import { ProjectRoutes } from '../modules/project/project.routes';
 
 const router = express.Router();
 
@@ -37,6 +38,10 @@ const moduleRoutes = [
   {
     path: '/employee-daily-break',
     route: EmployeeDailyBreakRoutes,
+  },
+  {
+    path: '/project',
+    route: ProjectRoutes,
   },
 ];
 
