@@ -29,7 +29,7 @@ router.patch(
 );
 
 router.put(
-  '/:id',
+  '/update-employee-status/:id',
   validateRequest(EmployeeValidation.updateEmployeeStatusZodSchema),
   auth(ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeController.updateEmployeeStatus

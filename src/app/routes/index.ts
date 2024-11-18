@@ -24,11 +24,11 @@ const moduleRoutes = [
     route: EmployeeAttendanceRoutes,
   },
   {
-    path: '/employee-daily-activity',
+    path: '/daily-activity',
     route: EmployeeDailyActivityRoutes,
   },
   {
-    path: '/employee-leave-request',
+    path: '/leave-request',
     route: EmployeeLeaveRequestRoutes,
   },
   {
@@ -36,7 +36,7 @@ const moduleRoutes = [
     route: TeamRoutes,
   },
   {
-    path: '/employee-daily-break',
+    path: '/daily-break',
     route: EmployeeDailyBreakRoutes,
   },
   {
