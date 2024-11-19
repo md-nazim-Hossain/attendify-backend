@@ -20,9 +20,10 @@ const loginEmployee = async (
     throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
   }
 
-  if (!(await employee.isPasswordMatch(password))) {
+  if (!(await employee.isPasswordMatch(password, isEmployeeExist.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
   }
+
   const refreshToken = employee.generateRefreshToken();
   const accessToken = employee.generateAccessToken();
 
@@ -69,7 +70,9 @@ const changePassword = async (
     throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
   }
 
-  if (!(await employeeModel.isPasswordMatch(oldPassword))) {
+  if (
+    !(await employeeModel.isPasswordMatch(oldPassword, employeeModel.password))
+  ) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Old password is incorrect');
   }
 

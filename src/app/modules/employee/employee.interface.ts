@@ -33,9 +33,12 @@ export interface IEmployeeFilters {
 }
 
 export interface IEmployeeMethods {
-  isPasswordMatch: (password: string) => Promise<boolean>;
+  isPasswordMatch: (
+    givenPassword: string,
+    hashedPassword: string
+  ) => Promise<boolean>;
   isEmployeeExist: (
-    id: string
+    employeeId: string
   ) => Promise<Pick<
     IEmployee,
     'employeeId' | 'password' | 'status' | 'role'

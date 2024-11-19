@@ -83,13 +83,13 @@ const employeeSchema = new Schema<
 );
 
 employeeSchema.methods.isEmployeeExist = async function (
-  id: string
+  employeeId: string
 ): Promise<Pick<
   IEmployee,
   'employeeId' | 'password' | 'status' | 'role'
 > | null> {
   const employee = await Employee.findOne(
-    { id },
+    { employeeId },
     { status: 1, _id: 1, password: 1, role: 1, employeeId: 1 }
   ).lean();
 
@@ -97,9 +97,10 @@ employeeSchema.methods.isEmployeeExist = async function (
 };
 
 employeeSchema.methods.isPasswordMatch = async function (
-  password: string
+  givenPassword: string,
+  hashedPassword: string
 ): Promise<boolean> {
-  return await bcrypt.compare(password.trim(), this.password);
+  return await bcrypt.compare(givenPassword.trim(), hashedPassword);
 };
 
 employeeSchema.pre('save', async function (next) {

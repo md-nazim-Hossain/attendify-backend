@@ -25,6 +25,13 @@ const addEmployeeZodSchema = z.object({
     role: z.enum(Object.values(ENUM_EMPLOYEE_ROLE) as [string, ...string[]], {
       required_error: 'role is required',
     }),
+    password: z
+      .string({
+        required_error: 'password is required',
+      })
+      .min(6, {
+        message: 'password must be at least 6 characters',
+      }),
     gender: z
       .enum(Object.values(ENUM_EMPLOYEE_GENDER) as [string, ...string[]])
       .optional(),

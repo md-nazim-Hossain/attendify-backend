@@ -5,9 +5,13 @@ const loginZodSchema = z.object({
     employeeId: z.string({
       required_error: 'employeeId is required',
     }),
-    password: z.string({
-      required_error: 'password is required',
-    }),
+    password: z
+      .string({
+        required_error: 'password is required',
+      })
+      .min(6, {
+        message: 'Password must be at least 6 characters',
+      }),
   }),
 });
 
@@ -24,9 +28,13 @@ const changePasswordZodSchema = z.object({
     oldPassword: z.string({
       required_error: 'Old password is required',
     }),
-    newPassword: z.string({
-      required_error: 'New password is required',
-    }),
+    newPassword: z
+      .string({
+        required_error: 'New password is required',
+      })
+      .min(6, {
+        message: 'Password must be at least 6 characters',
+      }),
   }),
 });
 

@@ -15,6 +15,12 @@ router.get(
 router.get('/:id', auth(), EmployeeController.getEmployeeById);
 
 router.post(
+  '/add-employee-developer',
+  validateRequest(EmployeeValidation.addEmployeeZodSchema),
+  EmployeeController.addEmployee
+);
+
+router.post(
   '/add-employee',
   validateRequest(EmployeeValidation.addEmployeeZodSchema),
   auth(ENUM_EMPLOYEE_ROLE.ADMIN),
