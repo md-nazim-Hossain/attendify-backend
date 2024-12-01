@@ -86,14 +86,14 @@ employeeSchema.methods.isEmployeeExist = async function (
   employeeId: string
 ): Promise<Pick<
   IEmployee,
-  'employeeId' | 'password' | 'status' | 'role'
+  'employeeId' | 'password' | 'status' | 'role' | '_id'
 > | null> {
   const employee = await Employee.findOne(
     { employeeId },
     { status: 1, _id: 1, password: 1, role: 1, employeeId: 1 }
   ).lean();
 
-  return employee;
+  return employee as IEmployee;
 };
 
 employeeSchema.methods.isPasswordMatch = async function (

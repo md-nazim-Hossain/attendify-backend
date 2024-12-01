@@ -5,7 +5,7 @@ import {
 } from '../../enums/employee.enum';
 
 export interface IEmployee {
-  _id: Schema.Types.ObjectId;
+  _id: Schema.Types.ObjectId | string;
   employeeId: string;
   fullName: string;
   email: string;
@@ -41,7 +41,7 @@ export interface IEmployeeMethods {
     employeeId: string
   ) => Promise<Pick<
     IEmployee,
-    'employeeId' | 'password' | 'status' | 'role'
+    'employeeId' | 'password' | 'status' | 'role' | '_id'
   > | null>;
   generateRefreshToken: () => string;
   generateAccessToken: () => string;

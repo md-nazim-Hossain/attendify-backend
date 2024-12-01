@@ -24,4 +24,6 @@ router.post(
   AuthController.changePassword
 );
 
+router.get('/profile', auth(), AuthController.getMyProfile);
+
 export const AuthRoutes = router;

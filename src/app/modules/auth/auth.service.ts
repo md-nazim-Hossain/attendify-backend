@@ -1,5 +1,6 @@
 import { config } from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import { IEmployee } from '../employee/employee.interface';
 import { Employee } from '../employee/employee.model';
 import {
   IChangePassword,
@@ -7,9 +8,25 @@ import {
   ILoginEmployeeResponse,
   IRefreshTokenResponse,
 } from './auth.interface';
-import httpStatus from 'http-status-codes';
+import httpStatus, { StatusCodes } from 'http-status-codes';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 
+const generateAccessAndRefreshToken = async (employeeId: string) => {
+  try {
+    const employee = await Employee.findById(employeeId);
+    if (!employee) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+    }
+    const accessToken = employee.generateAccessToken();
+    const refreshToken = employee.generateRefreshToken();
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(
+      StatusCodes.INTERNAL_SERVER_ERROR,
+      'Something went wrong,when generating access and refresh token'
+    );
+  }
+};
 const loginEmployee = async (
   payload: ILoginEmployee
 ): Promise<ILoginEmployeeResponse> => {
@@ -24,8 +41,9 @@ const loginEmployee = async (
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
   }
 
-  const refreshToken = employee.generateRefreshToken();
-  const accessToken = employee.generateAccessToken();
+  const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
+    isEmployeeExist._id as string
+  );
 
   return {
     accessToken,
@@ -83,8 +101,19 @@ const changePassword = async (
   });
 };
 
+export const getMyProfile = async (employeeId: string): Promise<IEmployee> => {
+  const result = await Employee.findOne({ employeeId }).select(
+    '-password -passwordChangeAt -__v'
+  );
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+  }
+  return result;
+};
+
 export const AuthService = {
   loginEmployee,
   refreshToken,
   changePassword,
+  getMyProfile,
 };
