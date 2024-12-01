@@ -3,4 +3,6 @@ export enum ENUM_ATTENDANCE_STATUS {
   ABSENT = 'absent',
   LATE = 'late',
   LEAVE = 'leave',
+  HALF_DAY = 'half-day',
+  OVERTIME = 'overtime',
 }

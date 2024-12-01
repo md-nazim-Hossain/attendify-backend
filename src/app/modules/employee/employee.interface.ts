@@ -3,11 +3,13 @@ import {
   ENUM_EMPLOYEE_GENDER,
   ENUM_EMPLOYEE_ROLE,
 } from '../../enums/employee.enum';
+import { ICompany } from '../company/company.interface';
 
 export interface IEmployee {
   _id: Schema.Types.ObjectId | string;
   employeeId: string;
   fullName: string;
+  company: Schema.Types.ObjectId | ICompany;
   email: string;
   phone?: string;
   address?: string;
@@ -30,6 +32,7 @@ export interface IEmployeeFilters {
   employeeId?: string;
   email?: string;
   phone?: string;
+  company?: string;
 }
 
 export interface IEmployeeMethods {
