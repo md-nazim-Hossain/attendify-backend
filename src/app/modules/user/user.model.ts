@@ -86,13 +86,14 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.generateAccessToken = function () {
+userSchema.methods.generateAccessToken = function (role?: string) {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       name: this.name,
       status: this.status,
+      role: role ?? 'user',
     },
     config.jwt.access_token_secret as Secret,
     {

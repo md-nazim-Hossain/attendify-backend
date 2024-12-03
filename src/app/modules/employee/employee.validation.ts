@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import {
-  ENUM_EMPLOYEE_GENDER,
   ENUM_EMPLOYEE_ROLE,
+  ENUM_EMPLOYEE_STATUS,
 } from '../../enums/employee.enum';
 
 const addEmployeeZodSchema = z.object({
@@ -9,58 +9,50 @@ const addEmployeeZodSchema = z.object({
     employeeId: z.string({
       required_error: 'employeeId is required',
     }),
-    fullName: z.string({
-      required_error: 'fullName is required',
+    company: z.string({
+      required_error: 'company is required',
     }),
-    email: z.string({
-      required_error: 'email is required',
-    }),
+    email: z
+      .string({
+        required_error: 'email is required',
+      })
+      .email({ message: 'Invalid email address' }),
+    employeeEmail: z
+      .string({
+        required_error: 'Employee email is required',
+      })
+      .email({ message: 'Invalid email address' }),
     address: z.string().optional(),
     designation: z.string({
       required_error: 'designation is required',
     }),
-    photo: z.any().optional(),
-    team: z.string().optional(),
     phone: z.string().optional(),
     role: z.enum(Object.values(ENUM_EMPLOYEE_ROLE) as [string, ...string[]], {
       required_error: 'role is required',
     }),
-    password: z
-      .string({
-        required_error: 'password is required',
-      })
-      .min(6, {
-        message: 'password must be at least 6 characters',
-      }),
-    gender: z
-      .enum(Object.values(ENUM_EMPLOYEE_GENDER) as [string, ...string[]])
-      .optional(),
   }),
 });
 
 const updateEmployeeZodSchema = z.object({
   body: z.object({
-    fullName: z.string().optional(),
-    email: z.string().optional(),
+    employeeEmail: z.string().optional(),
     address: z.string().optional(),
     designation: z.string().optional(),
-    team: z.string().optional(),
     phone: z.string().optional(),
-    photo: z.string().optional(),
     role: z
       .enum(Object.values(ENUM_EMPLOYEE_ROLE) as [string, ...string[]])
-      .optional(),
-    gender: z
-      .enum(Object.values(ENUM_EMPLOYEE_GENDER) as [string, ...string[]])
       .optional(),
   }),
 });
 
 const updateEmployeeStatusZodSchema = z.object({
   body: z.object({
-    status: z.boolean({
-      required_error: 'status is required',
-    }),
+    status: z.enum(
+      Object.values(ENUM_EMPLOYEE_STATUS) as [string, ...string[]],
+      {
+        required_error: 'status is required',
+      }
+    ),
   }),
 });
 

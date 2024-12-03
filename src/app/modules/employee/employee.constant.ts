@@ -1,11 +1,19 @@
-const employeeSearchFields = ['employeeId', 'fullName', 'email', 'phone'];
+const employeeSearchFields = [
+  'employeeId',
+  'employeeEmail',
+  'user',
+  'phone',
+  'company',
+];
 const employeeFilterableFields = [
   'searchTerm',
   'role',
   'status',
   'employeeId',
-  'email',
+  'employeeEmail',
   'phone',
+  'user',
+  'company',
 ];
 
 export const EmployeeConstant = {

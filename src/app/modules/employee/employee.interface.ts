@@ -1,53 +1,34 @@
 import { Model, Schema } from 'mongoose';
-import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
-import { ICompany } from '../company/company.interface';
+import {
+  ENUM_EMPLOYEE_ROLE,
+  ENUM_EMPLOYEE_STATUS,
+} from '../../enums/employee.enum';
+import { IUser } from '../user/user.interface';
 
 export interface IEmployee {
   _id: Schema.Types.ObjectId | string;
   employeeId: string;
-  fullName: string;
-  companies: Array<Schema.Types.ObjectId | ICompany>;
-  activeCompany?: Schema.Types.ObjectId | ICompany;
-  email: string;
+  user: Schema.Types.ObjectId | IUser;
+  company: Schema.Types.ObjectId | string;
+  employeeEmail: string;
   phone?: string;
   address?: string;
   designation: string;
-  photo?: string;
-  password: string;
-  passwordChangeAt?: string | Date;
   role: ENUM_EMPLOYEE_ROLE;
-  status: boolean;
-  creaedAt: string;
+  status: ENUM_EMPLOYEE_STATUS;
+  createdAt: string;
   updatedAt: string;
 }
 
 export interface IEmployeeFilters {
   searchTerm?: string;
   role?: ENUM_EMPLOYEE_ROLE;
-  status?: boolean;
+  status?: ENUM_EMPLOYEE_STATUS;
   employeeId?: string;
-  email?: string;
+  employeeEmail?: string;
   phone?: string;
+  user?: string;
   company?: string;
 }
 
-export interface IEmployeeMethods {
-  isPasswordMatch: (
-    givenPassword: string,
-    hashedPassword: string
-  ) => Promise<boolean>;
-  isEmployeeExist: (
-    employeeId: string
-  ) => Promise<Pick<
-    IEmployee,
-    'employeeId' | 'password' | 'status' | 'role' | '_id'
-  > | null>;
-  generateRefreshToken: () => string;
-  generateAccessToken: () => string;
-}
-
-export type IEmployeeModel = Model<
-  IEmployee,
-  Record<string, unknown>,
-  IEmployeeMethods
->;
+export type IEmployeeModel = Model<IEmployee, Record<string, unknown>>;

@@ -11,15 +11,12 @@ import { IEmployee } from './employee.interface';
 
 const addEmployee = catchAsync(async (req: Request, res: Response) => {
   const { ...employeeData } = req.body;
-  const result = await EmployeeService.addEmployee({
-    ...employeeData,
-    company: req.employee.companyId,
-  });
-  sendResponse(res, {
+  await EmployeeService.addEmployee(employeeData);
+  sendResponse<null>(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'Employee created successfully',
-    data: result,
+    message:
+      'Employee added successfully and send the sms employee for employee activation',
   });
 });
 

@@ -1,9 +1,9 @@
 import express from 'express';
-import auth from '../../middleware/auth.middleware';
 import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
 import { EmployeeValidation } from './employee.validation';
 import validateRequest from '../../middleware/validateRequest.middleware';
 import { EmployeeController } from './employee.controller';
+import auth from '../../middleware/auth.middleware';
 const router = express.Router();
 
 router.get(
@@ -12,7 +12,11 @@ router.get(
   EmployeeController.getAllEmployees
 );
 
-router.get('/:id', auth(), EmployeeController.getEmployeeById);
+router.get(
+  '/:id',
+  auth(ENUM_EMPLOYEE_ROLE.ADMIN),
+  EmployeeController.getEmployeeById
+);
 
 router.post(
   '/add-employee-developer',
@@ -30,14 +34,14 @@ router.post(
 router.patch(
   '/:id',
   validateRequest(EmployeeValidation.updateEmployeeZodSchema),
-  auth(),
+  auth(ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeController.updateEmployee
 );
 
 router.put(
   '/update-employee-status/:id',
   validateRequest(EmployeeValidation.updateEmployeeStatusZodSchema),
-  auth(ENUM_EMPLOYEE_ROLE.ADMIN),
+  auth(ENUM_EMPLOYEE_ROLE.ADMIN, ENUM_EMPLOYEE_ROLE.EMPLOYEE),
   EmployeeController.updateEmployeeStatus
 );
 
