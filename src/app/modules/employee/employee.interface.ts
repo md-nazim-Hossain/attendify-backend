@@ -1,8 +1,5 @@
 import { Model, Schema } from 'mongoose';
-import {
-  ENUM_EMPLOYEE_GENDER,
-  ENUM_EMPLOYEE_ROLE,
-} from '../../enums/employee.enum';
+import { ENUM_EMPLOYEE_ROLE } from '../../enums/employee.enum';
 import { ICompany } from '../company/company.interface';
 
 export interface IEmployee {
@@ -15,8 +12,6 @@ export interface IEmployee {
   phone?: string;
   address?: string;
   designation: string;
-  team?: Schema.Types.ObjectId | object;
-  gender?: ENUM_EMPLOYEE_GENDER;
   photo?: string;
   password: string;
   passwordChangeAt?: string | Date;
