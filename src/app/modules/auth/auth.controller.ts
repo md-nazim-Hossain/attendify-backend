@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status-codes';
-import { IEmployee } from '../employee/employee.interface';
-import { ICompany } from '../company/company.interface';
+import { IUser } from '../user/user.interface';
+import { IRefreshTokenResponse } from './auth.interface';
 
-const loginEmployee = async (req: Request, res: Response) => {
+const loginUser = async (req: Request, res: Response) => {
   const { ...loginData } = req.body;
-  const result = await AuthService.loginEmployee(loginData);
+  const result = await AuthService.loginUser(loginData);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -19,7 +19,7 @@ const loginEmployee = async (req: Request, res: Response) => {
 const refreshToken = async (req: Request, res: Response) => {
   const { refreshToken } = req.cookies;
   const result = await AuthService.refreshToken(refreshToken);
-  sendResponse(res, {
+  sendResponse<IRefreshTokenResponse>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Login Successfully',
@@ -29,19 +29,18 @@ const refreshToken = async (req: Request, res: Response) => {
 
 const changePassword = async (req: Request, res: Response) => {
   const { ...passwordData } = req.body;
-  const result = await AuthService.changePassword(req.employee, passwordData);
-  sendResponse(res, {
+  await AuthService.changePassword(req.user, passwordData);
+  sendResponse<null>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Password changed successfully',
-    data: result,
   });
 };
 
 const getMyProfile = async (req: Request, res: Response) => {
-  const employeeId = req.employee?.employeeId;
-  const result = await AuthService.getMyProfile(employeeId);
-  sendResponse<IEmployee>(res, {
+  const userId = req.user?._id;
+  const result = await AuthService.getMyProfile(userId);
+  sendResponse<IUser>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Profile fetched successfully',
@@ -49,21 +48,9 @@ const getMyProfile = async (req: Request, res: Response) => {
   });
 };
 
-const getMyCurrentActiveCompany = async (req: Request, res: Response) => {
-  const companyId = req.employee?.companyId;
-  const result = await AuthService.getMyCurrentActiveCompany(companyId);
-  sendResponse<ICompany>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Company fetched successfully',
-    data: result,
-  });
-};
-
 export const AuthController = {
-  loginEmployee,
+  loginUser,
   refreshToken,
   changePassword,
   getMyProfile,
-  getMyCurrentActiveCompany,
 };

@@ -1,12 +1,14 @@
-export interface ILoginEmployee {
-  employeeId: string;
+import { ENUM_USER_STATUS } from '../../enums/user.enum';
+
+export interface ILoginUser {
+  email: string;
   password: string;
 }
 
-export interface ILoginEmployeeResponse {
+export interface ILoginUserResponse {
   accessToken: string;
   refreshToken?: string;
-  status: boolean;
+  status: ENUM_USER_STATUS;
 }
 export interface IRefreshTokenResponse {
   accessToken: string;

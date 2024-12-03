@@ -21,7 +21,7 @@ export interface IUserMethods {
     hashedPassword: string
   ) => Promise<boolean>;
   isUserExist: (
-    userId: string
+    email: string
   ) => Promise<Pick<
     IUser,
     'name' | 'password' | 'status' | 'email' | '_id'

@@ -2,14 +2,14 @@ import express from 'express';
 import { AuthValidation } from './auth.validation';
 import { AuthController } from './auth.controller';
 import validateRequest from '../../middleware/validateRequest.middleware';
-import auth from '../../middleware/auth.middleware';
+import authMiddleware from '../../middleware/auth.middleware';
 
 const router = express.Router();
 
 router.post(
   '/login',
   validateRequest(AuthValidation.loginZodSchema),
-  AuthController.loginEmployee
+  AuthController.loginUser
 );
 router.post(
   '/refresh-token',
@@ -20,16 +20,10 @@ router.post(
 router.post(
   '/change-password',
   validateRequest(AuthValidation.changePasswordZodSchema),
-  auth(),
+  authMiddleware,
   AuthController.changePassword
 );
 
-router.get(
-  '/current-active-company',
-  auth(),
-  AuthController.getMyCurrentActiveCompany
-);
-
-router.get('/profile', auth(), AuthController.getMyProfile);
+router.get('/profile', authMiddleware, AuthController.getMyProfile);
 
 export const AuthRoutes = router;

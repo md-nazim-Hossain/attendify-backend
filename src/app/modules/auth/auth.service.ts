@@ -1,26 +1,24 @@
 import { config } from '../../../config';
 import ApiError from '../../../errors/ApiError';
-import { ICompany } from '../company/company.interface';
-import { Company } from '../company/company.model';
-import { IEmployee } from '../employee/employee.interface';
-import { Employee } from '../employee/employee.model';
+import { IUser } from '../user/user.interface';
+import { User } from '../user/user.model';
 import {
   IChangePassword,
-  ILoginEmployee,
-  ILoginEmployeeResponse,
+  ILoginUser,
+  ILoginUserResponse,
   IRefreshTokenResponse,
 } from './auth.interface';
 import httpStatus, { StatusCodes } from 'http-status-codes';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
 
-const generateAccessAndRefreshToken = async (employeeId: string) => {
+const generateAccessAndRefreshToken = async (usersId: string) => {
   try {
-    const employee = await Employee.findById(employeeId);
-    if (!employee) {
-      throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+    const user = await User.findById(usersId);
+    if (!user) {
+      throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
     }
-    const accessToken = employee.generateAccessToken();
-    const refreshToken = employee.generateRefreshToken();
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
     return { accessToken, refreshToken };
   } catch (error) {
     throw new ApiError(
@@ -29,28 +27,26 @@ const generateAccessAndRefreshToken = async (employeeId: string) => {
     );
   }
 };
-const loginEmployee = async (
-  payload: ILoginEmployee
-): Promise<ILoginEmployeeResponse> => {
-  const { employeeId, password } = payload;
-  const employee = new Employee();
-  const isEmployeeExist = await employee.isEmployeeExist(employeeId);
-  if (!isEmployeeExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
+  const { email, password } = payload;
+  const user = new User();
+  const isUserExist = await user.isUserExist(email);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
   }
 
-  if (!(await employee.isPasswordMatch(password, isEmployeeExist.password))) {
+  if (!(await user.isPasswordMatch(password, isUserExist.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password is incorrect');
   }
 
   const { accessToken, refreshToken } = await generateAccessAndRefreshToken(
-    isEmployeeExist._id as string
+    isUserExist._id as string
   );
 
   return {
     accessToken,
     refreshToken,
-    status: isEmployeeExist.status,
+    status: isUserExist.status,
   };
 };
 
@@ -63,17 +59,16 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { employeeId }: any = verifyToken;
+  const { email }: any = verifyToken;
 
-  const employee = new Employee();
-  const isEmployeeExist = await employee.isEmployeeExist(employeeId);
-
-  if (!isEmployeeExist) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+  const user = new User();
+  const isUserExist = await user.isUserExist(email);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
   }
 
   //generate new access token
-  const newAccessToken = employee.generateAccessToken();
+  const newAccessToken = user.generateAccessToken();
 
   return {
     accessToken: newAccessToken,
@@ -81,58 +76,41 @@ const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
 };
 
 const changePassword = async (
-  employee: JwtPayload,
+  user: JwtPayload,
   payload: IChangePassword
 ): Promise<void> => {
   const { oldPassword, newPassword } = payload;
-  const employeeModel = new Employee();
-  if (!(await employeeModel.isEmployeeExist(employee.employeeId))) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+  const userModel = new User();
+  if (!(await userModel.isUserExist(user.email))) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
   }
 
-  if (
-    !(await employeeModel.isPasswordMatch(oldPassword, employeeModel.password))
-  ) {
+  if (!(await userModel.isPasswordMatch(oldPassword, userModel.password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Old password is incorrect');
   }
 
-  employeeModel.password = newPassword;
-  employeeModel.passwordChangeAt = new Date();
-  await employeeModel.save({
+  userModel.password = newPassword;
+  userModel.passwordChangeAt = new Date();
+  await userModel.save({
     validateBeforeSave: false,
   });
 };
 
-export const getMyProfile = async (employeeId: string): Promise<IEmployee> => {
-  const result = await Employee.findOne({ employeeId })
-    .populate([
-      { path: 'activeCompany', select: '+name +logo +domain +website' },
-      {
-        path: 'companies',
-        select: '+name +logo +domain +website',
-      },
-    ])
-    .select('-password -passwordChangeAt -__v');
+export const getMyProfile = async (id: string): Promise<IUser> => {
+  const result = await User.findById(id, {
+    password: 0,
+    passwordChangeAt: 0,
+    __v: 0,
+  });
   if (!result) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
-  }
-  return result;
-};
-
-export const getMyCurrentActiveCompany = async (
-  companyId: string
-): Promise<ICompany> => {
-  const result = await Company.findById(companyId);
-  if (!result) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Company does not exist');
   }
   return result;
 };
 
 export const AuthService = {
-  loginEmployee,
+  loginUser,
   refreshToken,
   changePassword,
   getMyProfile,
-  getMyCurrentActiveCompany,
 };
