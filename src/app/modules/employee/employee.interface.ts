@@ -9,7 +9,8 @@ export interface IEmployee {
   _id: Schema.Types.ObjectId | string;
   employeeId: string;
   fullName: string;
-  company: Schema.Types.ObjectId | ICompany;
+  companies: Array<Schema.Types.ObjectId | ICompany>;
+  activeCompany?: Schema.Types.ObjectId | ICompany;
   email: string;
   phone?: string;
   address?: string;

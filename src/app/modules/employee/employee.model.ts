@@ -36,10 +36,14 @@ const employeeSchema = new Schema<
       lowercase: true,
       trim: true,
     },
-    company: {
-      type: Schema.Types.ObjectId,
+    companies: {
+      type: [Schema.Types.ObjectId],
       ref: 'Company',
       required: true,
+    },
+    activeCompany: {
+      type: Schema.Types.ObjectId,
+      ref: 'Company',
     },
     photo: {
       type: String,
@@ -92,12 +96,14 @@ employeeSchema.methods.isEmployeeExist = async function (
   employeeId: string
 ): Promise<Pick<
   IEmployee,
-  'employeeId' | 'password' | 'status' | 'role' | '_id' | 'company'
+  'employeeId' | 'password' | 'status' | 'role' | '_id' | 'activeCompany'
 > | null> {
   const employee = await Employee.findOne(
     { employeeId },
-    { status: 1, _id: 1, password: 1, role: 1, employeeId: 1, company: 1 }
-  ).lean();
+    { status: 1, _id: 1, password: 1, role: 1, employeeId: 1 }
+  )
+    .populate('activeCompany', { _id: 1, name: 1 })
+    .lean();
 
   return employee as IEmployee;
 };
@@ -126,7 +132,7 @@ employeeSchema.methods.generateAccessToken = function () {
       email: this.email,
       fullName: this.fullName,
       role: this.role,
-      companyId: (this.company as ICompany)._id,
+      companyId: (this.activeCompany as ICompany)._id,
     },
     config.jwt.access_token_secret as Secret,
     {
@@ -142,7 +148,7 @@ employeeSchema.methods.generateRefreshToken = function () {
       email: this.email,
       employeeId: this.employeeId,
       role: this.role,
-      companyId: (this.company as ICompany)._id,
+      companyId: (this.activeCompany as ICompany)._id,
     },
     config.jwt.refresh_token_secret as Secret,
     {

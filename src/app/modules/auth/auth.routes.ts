@@ -24,6 +24,12 @@ router.post(
   AuthController.changePassword
 );
 
+router.get(
+  '/current-active-company',
+  auth(),
+  AuthController.getMyCurrentActiveCompany
+);
+
 router.get('/profile', auth(), AuthController.getMyProfile);
 
 export const AuthRoutes = router;

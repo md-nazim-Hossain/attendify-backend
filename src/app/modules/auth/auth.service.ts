@@ -1,5 +1,7 @@
 import { config } from '../../../config';
 import ApiError from '../../../errors/ApiError';
+import { ICompany } from '../company/company.interface';
+import { Company } from '../company/company.model';
 import { IEmployee } from '../employee/employee.interface';
 import { Employee } from '../employee/employee.model';
 import {
@@ -102,11 +104,27 @@ const changePassword = async (
 };
 
 export const getMyProfile = async (employeeId: string): Promise<IEmployee> => {
-  const result = await Employee.findOne({ employeeId }).select(
-    '-password -passwordChangeAt -__v'
-  );
+  const result = await Employee.findOne({ employeeId })
+    .populate([
+      { path: 'activeCompany', select: '+name +logo +domain +website' },
+      {
+        path: 'companies',
+        select: '+name +logo +domain +website',
+      },
+    ])
+    .select('-password -passwordChangeAt -__v');
   if (!result) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+  }
+  return result;
+};
+
+export const getMyCurrentActiveCompany = async (
+  companyId: string
+): Promise<ICompany> => {
+  const result = await Company.findById(companyId);
+  if (!result) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Company does not exist');
   }
   return result;
 };
@@ -116,4 +134,5 @@ export const AuthService = {
   refreshToken,
   changePassword,
   getMyProfile,
+  getMyCurrentActiveCompany,
 };

@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status-codes';
 import { IEmployee } from '../employee/employee.interface';
+import { ICompany } from '../company/company.interface';
 
 const loginEmployee = async (req: Request, res: Response) => {
   const { ...loginData } = req.body;
@@ -48,9 +49,21 @@ const getMyProfile = async (req: Request, res: Response) => {
   });
 };
 
+const getMyCurrentActiveCompany = async (req: Request, res: Response) => {
+  const companyId = req.employee?.companyId;
+  const result = await AuthService.getMyCurrentActiveCompany(companyId);
+  sendResponse<ICompany>(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Company fetched successfully',
+    data: result,
+  });
+};
+
 export const AuthController = {
   loginEmployee,
   refreshToken,
   changePassword,
   getMyProfile,
+  getMyCurrentActiveCompany,
 };
