@@ -27,7 +27,11 @@ export interface IUserMethods {
     'name' | 'password' | 'status' | 'email' | '_id'
   > | null>;
   generateRefreshToken: () => string;
-  generateAccessToken: () => string;
+  generateAccessToken: (employee?: {
+    role: string;
+    companyId: string;
+    employeeId: string;
+  }) => string;
 }
 
 export type IUserModel = Model<IUser, Record<string, unknown>, IUserMethods>;

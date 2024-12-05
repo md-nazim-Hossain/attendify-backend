@@ -23,7 +23,8 @@ const companySchema = new Schema<
     },
     owner: {
       type: Schema.Types.ObjectId,
-      ref: 'Employee',
+      ref: 'User',
+      required: true,
     },
     phone: {
       type: String,
@@ -75,7 +76,7 @@ const companySchema = new Schema<
       required: true,
       enum: Object.values(ENUM_COMPANY_SIZE),
     },
-    totlaEmployees: {
+    totalEmployees: {
       type: Number,
       default: 0,
     },

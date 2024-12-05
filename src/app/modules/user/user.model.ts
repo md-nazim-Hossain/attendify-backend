@@ -86,14 +86,18 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.methods.generateAccessToken = function (role?: string) {
+userSchema.methods.generateAccessToken = function (employee?: {
+  role: string;
+  companyId: string;
+  employeeId: string;
+}) {
   return jwt.sign(
     {
       _id: this._id,
       email: this.email,
       name: this.name,
       status: this.status,
-      role: role ?? 'user',
+      ...{ ...(typeof employee === 'object' ? employee : {}) },
     },
     config.jwt.access_token_secret as Secret,
     {

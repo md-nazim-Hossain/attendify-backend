@@ -7,13 +7,17 @@ import {
   IPaginationOptions,
 } from '../../../interface/common';
 import { EmployeeConstant } from './employee.constant';
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
+import { ENUM_EMPLOYEE_STATUS } from '../../enums/employee.enum';
 
 const addEmployee = async (payload: IEmployee): Promise<void> => {
   // check if employee exist
   const isEmployeeExist = await Employee.findOne({
-    employeeId: payload.employeeId,
+    $and: [
+      { employeeId: payload.employeeId },
+      { company: new mongoose.Types.ObjectId(payload.company as string) },
+    ],
   });
 
   if (isEmployeeExist) {
@@ -24,11 +28,18 @@ const addEmployee = async (payload: IEmployee): Promise<void> => {
 };
 
 const getAllEmployees = async (
+  companyId: string,
   filters: IEmployeeFilters,
   pagination: IPaginationOptions
 ): Promise<IGenericResponse<IEmployee[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const andConditions = [];
+
+  if (companyId) {
+    andConditions.push({
+      company: new mongoose.Types.ObjectId(companyId),
+    });
+  }
 
   if (searchTerm) {
     andConditions.push({
@@ -78,8 +89,13 @@ const getAllEmployees = async (
   };
 };
 
-const getEmployeeById = async (employeeId: string): Promise<IEmployee> => {
-  const result = await Employee.findOne({ employeeId });
+const getEmployeeById = async (
+  employeeId: string,
+  companyId: string
+): Promise<IEmployee> => {
+  const result = await Employee.findOne({
+    $and: [{ employeeId }, { company: new mongoose.Types.ObjectId(companyId) }],
+  });
   if (!result) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Employee not found');
   }
@@ -88,35 +104,80 @@ const getEmployeeById = async (employeeId: string): Promise<IEmployee> => {
 
 const updateEmployee = async (
   employeeId: string,
+  companyId: string,
   payload: Partial<IEmployee>
 ): Promise<void> => {
-  const isEmployeeExist = await Employee.findOne({ employeeId });
-
-  if (!isEmployeeExist) {
-    throw new ApiError(StatusCodes.NOT_FOUND, 'Employee not found');
-  }
-
-  await Employee.findOneAndUpdate({ employeeId }, payload, {
-    new: true,
+  const isEmployeeExist = await Employee.findOne({
+    $and: [{ employeeId }, { company: new mongoose.Types.ObjectId(companyId) }],
   });
-};
-
-const updateEmployeeStatus = async (
-  employeeId: string,
-  status: boolean
-): Promise<void> => {
-  const isEmployeeExist = await Employee.findOne({ employeeId });
 
   if (!isEmployeeExist) {
     throw new ApiError(StatusCodes.NOT_FOUND, 'Employee not found');
   }
 
   await Employee.findOneAndUpdate(
-    { employeeId },
-    { status },
     {
-      new: true,
-    }
+      $and: [
+        { employeeId },
+        { company: new mongoose.Types.ObjectId(companyId) },
+      ],
+    },
+    payload
+  );
+};
+
+const updateEmployeeStatus = async (
+  employeeId: string,
+  companyId: string,
+  status: ENUM_EMPLOYEE_STATUS
+): Promise<void> => {
+  const isEmployeeExist = await Employee.findOne({
+    $and: [{ employeeId }, { company: new mongoose.Types.ObjectId(companyId) }],
+  });
+
+  if (!isEmployeeExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Employee not found');
+  }
+
+  await Employee.findOneAndUpdate(
+    {
+      $and: [
+        { employeeId },
+        { company: new mongoose.Types.ObjectId(companyId) },
+      ],
+    },
+    { status }
+  );
+};
+
+const employeeAcceptedInvitation = async (
+  userId: string,
+  employeeId: string,
+  companyId: string
+) => {
+  const isEmployeeExist = await Employee.findOne({
+    $and: [{ employeeId }, { company: new mongoose.Types.ObjectId(companyId) }],
+  });
+
+  if (!isEmployeeExist) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Employee not found');
+  }
+
+  if (isEmployeeExist.status === 'active') {
+    throw new ApiError(
+      StatusCodes.CONFLICT,
+      'Employee already accepted invitation'
+    );
+  }
+
+  await Employee.findOneAndUpdate(
+    {
+      $and: [
+        { employeeId },
+        { company: new mongoose.Types.ObjectId(companyId) },
+      ],
+    },
+    { status: 'active', user: new mongoose.Types.ObjectId(userId) }
   );
 };
 
@@ -126,4 +187,5 @@ export const EmployeeService = {
   getEmployeeById,
   updateEmployee,
   updateEmployeeStatus,
+  employeeAcceptedInvitation,
 };

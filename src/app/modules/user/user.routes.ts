@@ -21,8 +21,8 @@ router.patch(
 
 router.put(
   '/:id',
-  auth(),
   validateRequest(UserValidation.updateUserStatusZodSchema),
+  auth(),
   UserController.activeInactiveUser
 );
 

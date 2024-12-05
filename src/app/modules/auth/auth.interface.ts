@@ -1,3 +1,4 @@
+import { ENUM_EMPLOYEE_STATUS } from '../../enums/employee.enum';
 import { ENUM_USER_STATUS } from '../../enums/user.enum';
 
 export interface ILoginUser {
@@ -17,4 +18,10 @@ export interface IRefreshTokenResponse {
 export interface IChangePassword {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface ILoginCompanyResponse {
+  accessToken: string;
+  refreshToken?: string;
+  status: ENUM_EMPLOYEE_STATUS;
 }

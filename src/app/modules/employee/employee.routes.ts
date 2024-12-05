@@ -45,4 +45,11 @@ router.put(
   EmployeeController.updateEmployeeStatus
 );
 
+router.post(
+  '/employee-accepted-invitation',
+  validateRequest(EmployeeValidation.employeeAcceptedInvitationZodSchema),
+  auth(),
+  EmployeeController.employeeAcceptedInvitation
+);
+
 export const EmployeeRoutes = router;

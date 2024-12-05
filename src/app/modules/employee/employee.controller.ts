@@ -23,8 +23,12 @@ const addEmployee = catchAsync(async (req: Request, res: Response) => {
 const getAllEmployees = catchAsync(async (req: Request, res: Response) => {
   const filters = pick(req.query, EmployeeConstant.employeeFilterableFields);
   const pagination: IPaginationOptions = pick(req.query, paginationFields);
-
-  const result = await EmployeeService.getAllEmployees(filters, pagination);
+  const companyId = req?.user?.companyId;
+  const result = await EmployeeService.getAllEmployees(
+    companyId,
+    filters,
+    pagination
+  );
   sendResponse<IEmployee[]>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -36,7 +40,8 @@ const getAllEmployees = catchAsync(async (req: Request, res: Response) => {
 
 const getEmployeeById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await EmployeeService.getEmployeeById(id);
+  const companyId = req?.user?.companyId;
+  const result = await EmployeeService.getEmployeeById(id, companyId);
   sendResponse<IEmployee>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -48,7 +53,8 @@ const getEmployeeById = catchAsync(async (req: Request, res: Response) => {
 const updateEmployee = catchAsync(async (req: Request, res: Response) => {
   const { ...employeeData } = req.body;
   const { id } = req.params;
-  await EmployeeService.updateEmployee(id, employeeData);
+  const companyId = req?.user?.companyId;
+  await EmployeeService.updateEmployee(id, companyId, employeeData);
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -59,7 +65,8 @@ const updateEmployee = catchAsync(async (req: Request, res: Response) => {
 const updateEmployeeStatus = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const { status } = req.body;
-  await EmployeeService.updateEmployeeStatus(id, status);
+  const companyId = req?.user?.companyId;
+  await EmployeeService.updateEmployeeStatus(id, companyId, status);
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -67,10 +74,28 @@ const updateEmployeeStatus = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const employeeAcceptedInvitation = catchAsync(
+  async (req: Request, res: Response) => {
+    const userId = req.user?._id;
+    const { employeeId, companyId } = req.body;
+    await EmployeeService.employeeAcceptedInvitation(
+      userId,
+      employeeId,
+      companyId
+    );
+    sendResponse<void>(res, {
+      statusCode: StatusCodes.OK,
+      success: true,
+      message: 'Employee accepted invitation successfully',
+    });
+  }
+);
+
 export const EmployeeController = {
   addEmployee,
   updateEmployee,
   updateEmployeeStatus,
   getAllEmployees,
   getEmployeeById,
+  employeeAcceptedInvitation,
 };

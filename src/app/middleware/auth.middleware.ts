@@ -3,7 +3,6 @@ import ApiError from '../../errors/ApiError';
 import StatusCode from 'http-status-codes';
 import { config } from '../../config';
 import jwt, { Secret } from 'jsonwebtoken';
-import { Employee } from '../modules/employee/employee.model';
 
 const auth =
   (...roles: string[]) =>

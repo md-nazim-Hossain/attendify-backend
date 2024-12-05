@@ -14,7 +14,7 @@ const employeeSchema = new Schema<IEmployee, Record<string, unknown>>(
       index: true,
     },
     user: {
-      type: String,
+      type: Schema.Types.ObjectId,
       ref: 'User',
     },
     company: {

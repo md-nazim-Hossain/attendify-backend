@@ -1,15 +1,19 @@
+import mongoose from 'mongoose';
 import { config } from '../../../config';
 import ApiError from '../../../errors/ApiError';
 import { IUser } from '../user/user.interface';
 import { User } from '../user/user.model';
 import {
   IChangePassword,
+  ILoginCompanyResponse,
   ILoginUser,
   ILoginUserResponse,
   IRefreshTokenResponse,
 } from './auth.interface';
 import httpStatus, { StatusCodes } from 'http-status-codes';
 import jwt, { JwtPayload, Secret } from 'jsonwebtoken';
+import { Company } from '../company/company.model';
+import { Employee } from '../employee/employee.model';
 
 const generateAccessAndRefreshToken = async (usersId: string) => {
   try {
@@ -47,6 +51,52 @@ const loginUser = async (payload: ILoginUser): Promise<ILoginUserResponse> => {
     accessToken,
     refreshToken,
     status: isUserExist.status,
+  };
+};
+
+const loginCompany = async (
+  userId: string,
+  companyId: string
+): Promise<ILoginCompanyResponse> => {
+  const isCompanyExist = await Company.findById(companyId);
+  if (!isCompanyExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Company does not exist');
+  }
+
+  const isUserExist = await User.findById(userId);
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User does not exist');
+  }
+
+  const isEmployeeExist = await Employee.findOne({
+    $and: [
+      { company: new mongoose.Types.ObjectId(companyId) },
+      { user: new mongoose.Types.ObjectId(userId) },
+    ],
+  });
+
+  if (!isEmployeeExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
+  }
+
+  if (isEmployeeExist.status !== 'active') {
+    throw new ApiError(
+      httpStatus.UNAUTHORIZED,
+      'Unauthorized, employee is not active'
+    );
+  }
+
+  const accessToken = isUserExist.generateAccessToken({
+    role: isEmployeeExist.role,
+    employeeId: isEmployeeExist.employeeId,
+    companyId,
+  });
+  const refreshToken = isUserExist.generateRefreshToken();
+
+  return {
+    accessToken,
+    refreshToken,
+    status: isEmployeeExist.status,
   };
 };
 
@@ -96,16 +146,48 @@ const changePassword = async (
   });
 };
 
-export const getMyProfile = async (id: string): Promise<IUser> => {
-  const result = await User.findById(id, {
-    password: 0,
-    passwordChangeAt: 0,
-    __v: 0,
-  });
-  if (!result) {
+const getMyProfile = async (id: string): Promise<IUser> => {
+  const result = await User.aggregate([
+    {
+      $match: {
+        _id: new mongoose.Types.ObjectId(id),
+      },
+    },
+    {
+      $project: {
+        password: 0,
+        __v: 0,
+        passwordChangeAt: 0,
+      },
+    },
+
+    {
+      $lookup: {
+        from: 'employees',
+        localField: '_id',
+        foreignField: 'userId',
+        as: 'employee',
+        pipeline: [
+          {
+            $match: {
+              status: 'active',
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        employee: {
+          $arrayElemAt: ['$employee', 0],
+        },
+      },
+    },
+  ]);
+  if (!result || result.length === 0) {
     throw new ApiError(httpStatus.NOT_FOUND, 'Employee does not exist');
   }
-  return result;
+  return result[0];
 };
 
 export const AuthService = {
@@ -113,4 +195,5 @@ export const AuthService = {
   refreshToken,
   changePassword,
   getMyProfile,
+  loginCompany,
 };

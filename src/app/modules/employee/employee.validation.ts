@@ -12,11 +12,6 @@ const addEmployeeZodSchema = z.object({
     company: z.string({
       required_error: 'company is required',
     }),
-    email: z
-      .string({
-        required_error: 'email is required',
-      })
-      .email({ message: 'Invalid email address' }),
     employeeEmail: z
       .string({
         required_error: 'Employee email is required',
@@ -56,8 +51,20 @@ const updateEmployeeStatusZodSchema = z.object({
   }),
 });
 
+const employeeAcceptedInvitationZodSchema = z.object({
+  body: z.object({
+    employeeId: z.string({
+      required_error: 'employeeId is required',
+    }),
+    companyId: z.string({
+      required_error: 'companyId is required',
+    }),
+  }),
+});
+
 export const EmployeeValidation = {
   addEmployeeZodSchema,
   updateEmployeeZodSchema,
   updateEmployeeStatusZodSchema,
+  employeeAcceptedInvitationZodSchema,
 };
