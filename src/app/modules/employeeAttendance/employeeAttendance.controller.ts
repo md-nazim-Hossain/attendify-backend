@@ -17,7 +17,7 @@ const employeeCheckIn = catchAsync(async (req, res) => {
 
   await EmployeeAttendanceService.employeeCheckIn({
     ...employeeData,
-    employeeId: req.employee?.employeeId,
+    employeeId: req.user?.employeeObjectId,
     ip,
     browser,
     device,
@@ -31,7 +31,10 @@ const employeeCheckIn = catchAsync(async (req, res) => {
 
 const employeeCheckOut = catchAsync(async (req, res) => {
   const { ...employeeData } = req.body;
-  await EmployeeAttendanceService.employeeCheckOut(employeeData);
+  await EmployeeAttendanceService.employeeCheckOut(
+    employeeData,
+    req.user?.employeeObjectId
+  );
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -40,7 +43,7 @@ const employeeCheckOut = catchAsync(async (req, res) => {
 });
 
 const getAllMyAttendances = catchAsync(async (req, res) => {
-  const employeeId = req.employee?.employeeId;
+  const employeeId = req.user?.employeeObjectId;
   const pagination: IPaginationOptions = pick(req.query, paginationFields);
   const filters = pick(
     req.query,

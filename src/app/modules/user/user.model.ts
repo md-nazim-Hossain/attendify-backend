@@ -90,6 +90,7 @@ userSchema.methods.generateAccessToken = function (employee?: {
   role: string;
   companyId: string;
   employeeId: string;
+  employeeObjectId?: string;
 }) {
   return jwt.sign(
     {

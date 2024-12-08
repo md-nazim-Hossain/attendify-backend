@@ -31,6 +31,7 @@ export interface IUserMethods {
     role: string;
     companyId: string;
     employeeId: string;
+    employeeObjectId?: string;
   }) => string;
 }
 

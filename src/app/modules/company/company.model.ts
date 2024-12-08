@@ -1,10 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { ICompany, ICompanyModel } from './company.interface';
-import {
-  ENUM_COMPANY_SIZE,
-  ENUM_COMPANY_STATUS,
-  ENUM_COMPANY_TYPE,
-} from '../../enums/company.enum';
+import { ENUM_COMPANY_STATUS } from '../../enums/company.enum';
 
 const companySchema = new Schema<
   ICompany,
@@ -15,29 +11,6 @@ const companySchema = new Schema<
     name: {
       type: String,
       required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    phone: {
-      type: String,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
-    logo: {
-      type: String,
-    },
-    website: {
-      type: String,
     },
     domain: {
       type: String,
@@ -51,10 +24,10 @@ const companySchema = new Schema<
         message: 'Domain must start with https://',
       },
     },
-    type: {
-      type: String,
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
-      enum: Object.values(ENUM_COMPANY_TYPE),
     },
     status: {
       type: String,
@@ -64,21 +37,6 @@ const companySchema = new Schema<
     },
     verfiedAt: {
       type: Date,
-    },
-    description: {
-      type: String,
-    },
-    regNumber: {
-      type: String,
-    },
-    size: {
-      type: String,
-      required: true,
-      enum: Object.values(ENUM_COMPANY_SIZE),
-    },
-    totalEmployees: {
-      type: Number,
-      default: 0,
     },
   },
   {

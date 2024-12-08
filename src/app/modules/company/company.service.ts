@@ -34,10 +34,22 @@ const getAllMyCompanies = async (userId: string): Promise<ICompany[]> => {
           {
             $project: {
               name: 1,
-              logo: 1,
               domain: 1,
-              address: 1,
               createdAt: 1,
+            },
+            $lookup: {
+              from: 'companyDetails',
+              localField: '_id',
+              foreignField: 'company',
+              as: 'companyDetails',
+              pipeline: [
+                {
+                  $project: {
+                    logo: 1,
+                    address: 1,
+                  },
+                },
+              ],
             },
           },
         ],
@@ -62,10 +74,16 @@ const getAllMyCompanies = async (userId: string): Promise<ICompany[]> => {
 export const getMyCompanies = async (
   employeeId: string
 ): Promise<ICompany[]> => {
-  const companies = await Company.find({ owner: employeeId }).populate(
-    'owner',
-    'name email status'
-  );
+  const companies = await Company.find({ owner: employeeId }).populate([
+    {
+      path: 'owner',
+      select: 'name email status',
+    },
+    {
+      path: 'companyDetails',
+      select: 'logo address',
+    },
+  ]);
   return companies;
 };
 

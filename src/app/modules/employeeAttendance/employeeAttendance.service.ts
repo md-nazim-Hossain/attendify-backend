@@ -12,16 +12,23 @@ import {
 } from '../../../interface/common';
 import { EmployeeAttendanceConstant } from './employeeAttendance.constant';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { ENUM_ATTENDANCE_STATUS } from '../../enums/employeeAttendanceEnum';
 
 const employeeCheckIn = async (payload: IEmployeeAttendance): Promise<void> => {
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   const attendance = await EmployeeAttendance.findOne({
-    createdAt: {
-      $gte: startOfDay,
-      $lt: endOfDay,
-    },
+    $and: [
+      {
+        employeeId: new mongoose.Types.ObjectId(payload.employeeId as string),
+      },
+      {
+        createdAt: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      },
+    ],
   });
 
   if (attendance) {
@@ -30,13 +37,21 @@ const employeeCheckIn = async (payload: IEmployeeAttendance): Promise<void> => {
   await EmployeeAttendance.create(payload);
 };
 
-const employeeCheckOut = async (payload: string): Promise<void> => {
+const employeeCheckOut = async (
+  payload: string,
+  employeeId: string
+): Promise<void> => {
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   const attendance = await EmployeeAttendance.findOne({
-    createdAt: {
-      $gte: startOfDay,
-      $lt: endOfDay,
-    },
+    $and: [
+      { employeeId: new mongoose.Types.ObjectId(employeeId) },
+      {
+        createdAt: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      },
+    ],
   });
 
   if (!attendance) {
@@ -56,7 +71,7 @@ const employeeCheckOut = async (payload: string): Promise<void> => {
   }
   attendance.checkOutTime = DateTimeHelpers.getCurrentTime();
   attendance.checkOutLocation = payload;
-  await attendance.save();
+  await attendance.save({ validateBeforeSave: false });
 };
 
 const getAllMyAttendances = async (
