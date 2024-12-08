@@ -11,6 +11,8 @@ import { IEmployee } from './employee.interface';
 
 const addEmployee = catchAsync(async (req: Request, res: Response) => {
   const { ...employeeData } = req.body;
+  const photoLocalPath = req.file?.path;
+  console.log(photoLocalPath);
   await EmployeeService.addEmployee(employeeData);
   sendResponse<null>(res, {
     statusCode: StatusCodes.OK,

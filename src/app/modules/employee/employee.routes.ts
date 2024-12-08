@@ -4,6 +4,7 @@ import { EmployeeValidation } from './employee.validation';
 import validateRequest from '../../middleware/validateRequest.middleware';
 import { EmployeeController } from './employee.controller';
 import auth from '../../middleware/auth.middleware';
+import { upload } from '../../middleware/multer.middleware';
 const router = express.Router();
 
 router.get(
@@ -26,6 +27,7 @@ router.post(
 
 router.post(
   '/add-employee',
+  upload.single('photo'),
   validateRequest(EmployeeValidation.addEmployeeZodSchema),
   auth(ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeController.addEmployee
@@ -33,6 +35,7 @@ router.post(
 
 router.patch(
   '/:id',
+  upload.single('photo'),
   validateRequest(EmployeeValidation.updateEmployeeZodSchema),
   auth(ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeController.updateEmployee

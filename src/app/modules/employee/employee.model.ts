@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { IEmployeeModel, IEmployee } from './employee.interface';
 import {
+  ENUM_EMPLOYEE_GENDER,
   ENUM_EMPLOYEE_ROLE,
   ENUM_EMPLOYEE_STATUS,
 } from '../../enums/employee.enum';
@@ -21,6 +22,19 @@ const employeeSchema = new Schema<IEmployee, Record<string, unknown>>(
       type: Schema.Types.ObjectId,
       ref: 'Company',
       required: true,
+    },
+    fullName: {
+      type: String,
+    },
+    photo: {
+      type: String,
+    },
+    gender: {
+      type: String,
+      enum: Object.values(ENUM_EMPLOYEE_GENDER),
+    },
+    dob: {
+      type: String,
     },
     employeeEmail: {
       type: String,

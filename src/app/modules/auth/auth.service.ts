@@ -166,7 +166,7 @@ const getMyProfile = async (id: string): Promise<IUser> => {
       $lookup: {
         from: 'employees',
         localField: '_id',
-        foreignField: 'userId',
+        foreignField: 'user',
         as: 'employee',
         pipeline: [
           {

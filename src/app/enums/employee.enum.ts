@@ -9,3 +9,9 @@ export enum ENUM_EMPLOYEE_STATUS {
   PENDING = 'pending',
   REJECTED = 'rejected',
 }
+
+export enum ENUM_EMPLOYEE_GENDER {
+  MALE = 'male',
+  FEMALE = 'female',
+  OTHER = 'other',
+}

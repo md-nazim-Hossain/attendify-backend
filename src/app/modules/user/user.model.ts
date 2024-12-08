@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 import { IUser, IUserMethods, IUserModel } from './user.interface';
-import { ENUM_USER_GENDER, ENUM_USER_STATUS } from '../../enums/user.enum';
+import { ENUM_USER_STATUS } from '../../enums/user.enum';
 import jwt, { Secret } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import { config } from '../../../config';
@@ -22,16 +22,6 @@ const userSchema = new Schema<IUser, Record<string, unknown>, IUserMethods>(
     password: {
       type: String,
       required: true,
-    },
-    photo: {
-      type: String,
-    },
-    gender: {
-      type: String,
-      enum: Object.values(ENUM_USER_GENDER),
-    },
-    dob: {
-      type: String,
     },
     passwordChangeAt: {
       type: Date,

@@ -1,14 +1,11 @@
 import { Model, Schema } from 'mongoose';
-import { ENUM_USER_GENDER, ENUM_USER_STATUS } from '../../enums/user.enum';
+import { ENUM_USER_STATUS } from '../../enums/user.enum';
 
 export interface IUser {
   _id: string | Schema.Types.ObjectId;
   name: string;
   email: string;
   password: string;
-  photo?: string;
-  gender?: ENUM_USER_GENDER;
-  dob?: string;
   passwordChangeAt?: string | Date;
   status: ENUM_USER_STATUS;
   createdAt?: string;

@@ -37,10 +37,12 @@ const getAllMyCompanies = async (userId: string): Promise<ICompany[]> => {
               domain: 1,
               createdAt: 1,
             },
+          },
+          {
             $lookup: {
               from: 'companyDetails',
-              localField: '_id',
-              foreignField: 'company',
+              localField: 'company',
+              foreignField: '_id',
               as: 'companyDetails',
               pipeline: [
                 {
