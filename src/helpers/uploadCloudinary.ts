@@ -24,4 +24,15 @@ const uploadOnCloudinary = async (localFilePath: string) => {
   }
 };
 
-export { uploadOnCloudinary };
+const deleteFromCloudinary = async (publicId: string) => {
+  try {
+    if (!publicId) throw new Error('publicId is required');
+    let id = publicId.split('/').pop();
+    id = id?.split('.')[0];
+    return await cloudinary.uploader.destroy('attendify/' + id);
+  } catch (error) {
+    return null;
+  }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary };

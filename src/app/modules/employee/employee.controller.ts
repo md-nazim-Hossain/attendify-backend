@@ -8,11 +8,24 @@ import { EmployeeConstant } from './employee.constant';
 import { paginationFields } from '../../constant/paginationConstant';
 import { IPaginationOptions } from '../../../interface/common';
 import { IEmployee } from './employee.interface';
+import {
+  deleteFromCloudinary,
+  uploadOnCloudinary,
+} from '../../../helpers/uploadCloudinary';
+import ApiError from '../../../errors/ApiError';
 
 const addEmployee = catchAsync(async (req: Request, res: Response) => {
   const { ...employeeData } = req.body;
   const photoLocalPath = req.file?.path;
-  console.log(photoLocalPath);
+  employeeData['company'] = req?.user?.companyId;
+
+  if (photoLocalPath) {
+    const photo = await uploadOnCloudinary(photoLocalPath);
+    if (!photo || !photo?.url) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to upload image');
+    }
+    employeeData['photo'] = photo?.url;
+  }
   await EmployeeService.addEmployee(employeeData);
   sendResponse<null>(res, {
     statusCode: StatusCodes.OK,
@@ -56,6 +69,20 @@ const updateEmployee = catchAsync(async (req: Request, res: Response) => {
   const { ...employeeData } = req.body;
   const { id } = req.params;
   const companyId = req?.user?.companyId;
+  const photoLocalPath = req.file?.path;
+  const existingPhoto = req?.body?.existingPhoto;
+  if (photoLocalPath) {
+    const photo = await uploadOnCloudinary(photoLocalPath);
+    if (!photo || !photo?.url) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to upload image');
+    }
+    employeeData['photo'] = photo?.url;
+    const result = await deleteFromCloudinary(existingPhoto);
+    if (!result) {
+      throw new ApiError(StatusCodes.BAD_REQUEST, 'Failed to delete image');
+    }
+  }
+
   await EmployeeService.updateEmployee(id, companyId, employeeData);
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,

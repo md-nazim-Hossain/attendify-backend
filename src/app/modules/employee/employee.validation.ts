@@ -14,9 +14,6 @@ const addEmployeeZodSchema = z.object({
       required_error: 'fullName is required',
     }),
     photo: z.any().optional(),
-    company: z.string({
-      required_error: 'company is required',
-    }),
     employeeEmail: z
       .string({
         required_error: 'Employee email is required',
@@ -41,6 +38,7 @@ const updateEmployeeZodSchema = z.object({
   body: z.object({
     fullName: z.string().optional(),
     photo: z.any().optional(),
+    existingPhoto: z.any().optional(),
     employeeEmail: z.string().optional(),
     address: z.string().optional(),
     designation: z.string().optional(),
