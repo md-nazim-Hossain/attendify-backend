@@ -33,7 +33,6 @@ const auth =
         throw new ApiError(StatusCode.UNAUTHORIZED, 'Unauthorized request');
       }
       req.user = verifiedUser;
-
       if (roles.length && !roles.includes(verifiedUser.role)) {
         throw new ApiError(StatusCode.FORBIDDEN, 'Forbidden');
       }

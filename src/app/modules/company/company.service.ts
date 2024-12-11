@@ -54,6 +54,13 @@ const getAllMyCompanies = async (userId: string): Promise<ICompany[]> => {
               ],
             },
           },
+          {
+            $addFields: {
+              companyDetails: {
+                $arrayElemAt: ['$companyDetails', 0],
+              },
+            },
+          },
         ],
       },
     },
@@ -73,22 +80,56 @@ const getAllMyCompanies = async (userId: string): Promise<ICompany[]> => {
   return (companies[0] as unknown as { company: ICompany[] }).company;
 };
 
-export const getMyCompanies = async (
-  employeeId: string
-): Promise<ICompany[]> => {
-  const companies = await Company.find({ owner: employeeId }).populate([
+export const getMyCompanies = async (userId: string): Promise<ICompany[]> => {
+  const companies = await Company.aggregate([
     {
-      path: 'owner',
-      select: 'name email status',
+      $match: {
+        $and: [
+          { status: 'active' },
+          { owner: new mongoose.Types.ObjectId(userId) },
+        ],
+      },
     },
     {
-      path: 'companyDetails',
-      select: 'logo address',
+      $lookup: {
+        from: 'users',
+        let: { ownerId: '$owner' },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$_id', '$$ownerId'] },
+                  { $eq: ['$status', 'active'] },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'owner',
+      },
+    },
+    {
+      $lookup: {
+        from: 'companyDetails',
+        localField: '_id',
+        foreignField: 'company',
+        as: 'companyDetails',
+      },
+    },
+    {
+      $addFields: {
+        owner: {
+          $arrayElemAt: ['$owner', 0],
+        },
+        companyDetails: {
+          $arrayElemAt: ['$companyDetails', 0],
+        },
+      },
     },
   ]);
   return companies;
 };
-
 export const CompanyService = {
   createCompany,
   getAllMyCompanies,

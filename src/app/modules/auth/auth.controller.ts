@@ -56,12 +56,16 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
 
 const getMyProfile = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?._id;
+  const companyId = req.user?.companyId || null;
   const result = await AuthService.getMyProfile(userId);
-  sendResponse<IUser>(res, {
+  sendResponse<IUser & { companyId: string | null }>(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Profile fetched successfully',
-    data: result,
+    data: {
+      ...result,
+      companyId,
+    },
   });
 });
 
