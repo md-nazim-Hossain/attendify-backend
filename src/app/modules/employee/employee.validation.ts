@@ -24,9 +24,9 @@ const addEmployeeZodSchema = z.object({
       required_error: 'designation is required',
     }),
     phone: z.string().optional(),
-    role: z.enum(Object.values(ENUM_EMPLOYEE_ROLE) as [string, ...string[]], {
-      required_error: 'role is required',
-    }),
+    role: z
+      .enum(Object.values(ENUM_EMPLOYEE_ROLE) as [string, ...string[]])
+      .optional(),
     dob: z.string().optional(),
     gender: z
       .enum(Object.values(ENUM_EMPLOYEE_GENDER) as [string, ...string[]])

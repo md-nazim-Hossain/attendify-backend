@@ -11,13 +11,13 @@ import { EmployeeLeaveRequestValidation } from './employeeLeaveRequest.validatio
 router.post(
   '/add-leave-request',
   validateRequest(EmployeeLeaveRequestValidation.addLeaveRequestZodSchema),
-  auth(ENUM_EMPLOYEE_ROLE.EMPLOYEE),
+  auth(ENUM_EMPLOYEE_ROLE.EMPLOYEE, ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeLeaveRequestController.addLeaveRequest
 );
 
 router.get(
   '/my-leave-requests',
-  auth(ENUM_EMPLOYEE_ROLE.EMPLOYEE),
+  auth(ENUM_EMPLOYEE_ROLE.EMPLOYEE, ENUM_EMPLOYEE_ROLE.ADMIN),
   EmployeeLeaveRequestController.getMyLeaveRequests
 );
 

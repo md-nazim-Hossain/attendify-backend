@@ -11,7 +11,7 @@ const employeeAttendanceSchema = new Schema<
   Record<string, unknown>
 >(
   {
-    employeeId: {
+    employee: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'Employee',

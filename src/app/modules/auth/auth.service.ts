@@ -89,7 +89,7 @@ const loginCompany = async (
   const accessToken = isUserExist.generateAccessToken({
     role: isEmployeeExist.role,
     employeeId: isEmployeeExist.employeeId,
-    employeeObjectId: isEmployeeExist.id,
+    employeeObjectId: isEmployeeExist._id,
     companyId,
   });
   const refreshToken = isUserExist.generateRefreshToken();

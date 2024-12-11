@@ -27,7 +27,7 @@ const moduleRoutes = [
     route: CompanyRoutes,
   },
   {
-    path: '/company-details',
+    path: '/company',
     route: CompanyDetailsRoutes,
   },
   {

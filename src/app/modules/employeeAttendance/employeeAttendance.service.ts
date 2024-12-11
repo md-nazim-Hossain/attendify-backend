@@ -14,13 +14,25 @@ import { EmployeeAttendanceConstant } from './employeeAttendance.constant';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
 import mongoose, { SortOrder } from 'mongoose';
 import { ENUM_ATTENDANCE_STATUS } from '../../enums/employeeAttendanceEnum';
+import { CompanyDetails } from '../CompanyDetails/companyDetails.model';
 
-const employeeCheckIn = async (payload: IEmployeeAttendance): Promise<void> => {
+const employeeCheckIn = async (
+  payload: IEmployeeAttendance,
+  companyId: string
+): Promise<void> => {
+  const officeTime = await CompanyDetails.findOne({
+    company: new mongoose.Types.ObjectId(companyId),
+  });
+
+  if (!officeTime) {
+    throw new ApiError(StatusCodes.NOT_FOUND, 'Office time not found');
+  }
+
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   const attendance = await EmployeeAttendance.findOne({
     $and: [
       {
-        employeeId: new mongoose.Types.ObjectId(payload.employeeId as string),
+        employee: new mongoose.Types.ObjectId(payload.employee as string),
       },
       {
         createdAt: {
@@ -34,7 +46,16 @@ const employeeCheckIn = async (payload: IEmployeeAttendance): Promise<void> => {
   if (attendance) {
     throw new ApiError(StatusCodes.BAD_REQUEST, 'Attendance already exist');
   }
-  await EmployeeAttendance.create(payload);
+
+  const status = DateTimeHelpers.getAttendanceStatus(
+    officeTime.officeStartTime,
+    officeTime.officeEndTime
+  );
+
+  await EmployeeAttendance.create({
+    ...payload,
+    status,
+  });
 };
 
 const employeeCheckOut = async (
@@ -44,7 +65,7 @@ const employeeCheckOut = async (
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   const attendance = await EmployeeAttendance.findOne({
     $and: [
-      { employeeId: new mongoose.Types.ObjectId(employeeId) },
+      { employee: new mongoose.Types.ObjectId(employeeId) },
       {
         createdAt: {
           $gte: startOfDay,
@@ -74,11 +95,28 @@ const employeeCheckOut = async (
   await attendance.save({ validateBeforeSave: false });
 };
 
+const getCheckTodayIsAttendance = async (
+  employeeId: string
+): Promise<IEmployeeAttendance | null> => {
+  const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
+  return await EmployeeAttendance.findOne({
+    $and: [
+      { employee: new mongoose.Types.ObjectId(employeeId) },
+      {
+        createdAt: {
+          $gte: startOfDay,
+          $lt: endOfDay,
+        },
+      },
+    ],
+  });
+};
+
 const getAllMyAttendances = async (
   employeeId: string
 ): Promise<IEmployeeAttendance[]> => {
   const employeeAttendance = await EmployeeAttendance.find({
-    employeeId,
+    employee: new mongoose.Types.ObjectId(employeeId),
   });
   return employeeAttendance;
 };
@@ -145,7 +183,7 @@ const getAllAttendancesByEmployeeId = async (
 
   if (employeeId) {
     andConditions.push({
-      employeeId,
+      employee: new mongoose.Types.ObjectId(employeeId),
     });
   }
 
@@ -221,4 +259,5 @@ export const EmployeeAttendanceService = {
   getAttendanceById,
   updateAttendanceStatus,
   getAllAttendancesByEmployeeId,
+  getCheckTodayIsAttendance,
 };

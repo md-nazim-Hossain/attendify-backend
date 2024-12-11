@@ -14,14 +14,18 @@ const employeeCheckIn = catchAsync(async (req, res) => {
     req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'Unknown IP';
   const browser = req.useragent?.browser || 'Unknown Browser';
   const device = req.useragent?.platform || 'Unknown Device';
+  const companyId = req?.user?.companyId;
 
-  await EmployeeAttendanceService.employeeCheckIn({
-    ...employeeData,
-    employeeId: req.user?.employeeObjectId,
-    ip,
-    browser,
-    device,
-  });
+  await EmployeeAttendanceService.employeeCheckIn(
+    {
+      ...employeeData,
+      employeeId: req.user?.employeeObjectId,
+      ip,
+      browser,
+      device,
+    },
+    companyId
+  );
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,
     success: true,
@@ -39,6 +43,18 @@ const employeeCheckOut = catchAsync(async (req, res) => {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Employee checked out successfully',
+  });
+});
+
+const getCheckTodayIsAttendance = catchAsync(async (req, res) => {
+  const employeeId = req.user?.employeeObjectId;
+  const result =
+    await EmployeeAttendanceService.getCheckTodayIsAttendance(employeeId);
+  sendResponse<boolean>(res, {
+    statusCode: StatusCodes.OK,
+    success: true,
+    message: 'Check today is attendance fetched successfully',
+    data: !!result,
   });
 });
 
@@ -129,4 +145,5 @@ export const EmployeeAttendanceController = {
   getAttendanceById,
   updateAttendanceStatus,
   getAllAttendancesByEmployeeId,
+  getCheckTodayIsAttendance,
 };

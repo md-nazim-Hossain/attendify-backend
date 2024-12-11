@@ -28,7 +28,7 @@ export interface IUserMethods {
     role: string;
     companyId: string;
     employeeId: string;
-    employeeObjectId?: string;
+    employeeObjectId?: string | Schema.Types.ObjectId;
   }) => string;
 }
 

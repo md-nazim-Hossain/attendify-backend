@@ -8,12 +8,30 @@ import { EmployeeAttendanceValidation } from './employeeAttendance.validation';
 const router = express.Router();
 
 const { ADMIN, EMPLOYEE } = ENUM_EMPLOYEE_ROLE;
-router.get('/', auth(ADMIN), EmployeeAttendanceController.getAllAttendances);
-router.get(
-  '/:id',
-  auth(ADMIN, EMPLOYEE),
-  EmployeeAttendanceController.getAttendanceById
+
+// Routes for employee attendance
+router.post(
+  '/check-in',
+  validateRequest(EmployeeAttendanceValidation.checkInZodSchema),
+  auth(EMPLOYEE, ADMIN),
+  EmployeeAttendanceController.employeeCheckIn
 );
+
+router.post(
+  '/check-out',
+  validateRequest(EmployeeAttendanceValidation.checkOutZodSchema),
+  auth(EMPLOYEE, ADMIN),
+  EmployeeAttendanceController.employeeCheckOut
+);
+
+router.get(
+  '/check-today-is-attendance',
+  auth(ADMIN, EMPLOYEE),
+  EmployeeAttendanceController.getCheckTodayIsAttendance
+);
+
+// Routes for getting attendance records
+router.get('/', auth(ADMIN), EmployeeAttendanceController.getAllAttendances);
 
 router.get(
   '/my-attendances',
@@ -22,28 +40,22 @@ router.get(
 );
 
 router.get(
+  '/:id',
+  auth(ADMIN, EMPLOYEE),
+  EmployeeAttendanceController.getAttendanceById
+);
+
+router.get(
   '/employee/:id',
   auth(ADMIN),
   EmployeeAttendanceController.getAllAttendancesByEmployeeId
 );
 
+// Route for updating attendance status
 router.patch(
   '/:id',
   auth(ADMIN),
   EmployeeAttendanceController.updateAttendanceStatus
-);
-
-router.post(
-  '/check-in',
-  validateRequest(EmployeeAttendanceValidation.checkInZodSchema),
-  auth(EMPLOYEE),
-  EmployeeAttendanceController.employeeCheckIn
-);
-router.post(
-  '/check-out',
-  validateRequest(EmployeeAttendanceValidation.checkOutZodSchema),
-  auth(EMPLOYEE),
-  EmployeeAttendanceController.employeeCheckOut
 );
 
 export const EmployeeAttendanceRoutes = router;

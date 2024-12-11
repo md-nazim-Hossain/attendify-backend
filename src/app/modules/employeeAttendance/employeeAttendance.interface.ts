@@ -4,7 +4,7 @@ import { ENUM_ATTENDANCE_STATUS } from '../../enums/employeeAttendanceEnum';
 
 export interface IEmployeeAttendance {
   _id: string;
-  employeeId: Schema.Types.ObjectId | IEmployee | string;
+  employee: Schema.Types.ObjectId | IEmployee | string;
   checkInTime: string;
   checkOutTime?: string;
   checkInLocation: string;
@@ -20,7 +20,7 @@ export interface IEmployeeAttendance {
 export interface IEmployeeAttendanceFilters {
   searchTerm?: string;
   status?: ENUM_ATTENDANCE_STATUS;
-  employeeId?: string;
+  employee?: string;
   checkInLocation?: string;
   checkOutLocation?: string;
   checkInTime?: string;
