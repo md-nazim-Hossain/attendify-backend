@@ -1,21 +1,23 @@
 const employeeAttendanceSearchFields = [
-  'employeeId',
+  'employee',
   'status',
   'device',
   'browser',
   'ip',
+  'companyId',
 ];
 
 const employeeAttendanceFilterableFields = [
   'searchTerm',
   'status',
-  'employeeId',
+  'employee',
   'checkInLocation',
   'checkOutLocation',
   'checkInTime',
   'checkOutTime',
   'device',
   'browser',
+  'companyId',
 ];
 
 export const EmployeeAttendanceConstant = {

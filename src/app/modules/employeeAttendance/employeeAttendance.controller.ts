@@ -19,7 +19,7 @@ const employeeCheckIn = catchAsync(async (req, res) => {
   await EmployeeAttendanceService.employeeCheckIn(
     {
       ...employeeData,
-      employeeId: req.user?.employeeObjectId,
+      employee: req.user?.employeeObjectId,
       ip,
       browser,
       device,
@@ -37,7 +37,8 @@ const employeeCheckOut = catchAsync(async (req, res) => {
   const { ...employeeData } = req.body;
   await EmployeeAttendanceService.employeeCheckOut(
     employeeData,
-    req.user?.employeeObjectId
+    req.user?.employeeObjectId,
+    req.user?.companyId
   );
   sendResponse<void>(res, {
     statusCode: StatusCodes.OK,
@@ -48,13 +49,16 @@ const employeeCheckOut = catchAsync(async (req, res) => {
 
 const getCheckTodayIsAttendance = catchAsync(async (req, res) => {
   const employeeId = req.user?.employeeObjectId;
-  const result =
-    await EmployeeAttendanceService.getCheckTodayIsAttendance(employeeId);
-  sendResponse<boolean>(res, {
+  const companyId = req.user?.companyId;
+  const result = await EmployeeAttendanceService.getCheckTodayIsAttendance(
+    employeeId,
+    companyId
+  );
+  sendResponse<IEmployeeAttendance | null>(res, {
     statusCode: StatusCodes.OK,
     success: true,
     message: 'Check today is attendance fetched successfully',
-    data: !!result,
+    data: result,
   });
 });
 
@@ -65,8 +69,10 @@ const getAllMyAttendances = catchAsync(async (req, res) => {
     req.query,
     EmployeeAttendanceConstant.employeeAttendanceFilterableFields
   );
-  const result =
-    await EmployeeAttendanceService.getAllMyAttendances(employeeId);
+  const result = await EmployeeAttendanceService.getAllMyAttendances(
+    employeeId,
+    req.user?.companyId
+  );
   sendResponse<IEmployeeAttendance[]>(res, {
     statusCode: StatusCodes.OK,
     success: true,

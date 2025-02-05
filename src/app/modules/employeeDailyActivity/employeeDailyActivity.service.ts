@@ -1,4 +1,4 @@
-import { SortOrder } from 'mongoose';
+import mongoose, { SortOrder } from 'mongoose';
 import { paginationHelpers } from '../../../helpers/paginationHelpers';
 import {
   IGenericResponse,
@@ -81,7 +81,7 @@ const getMyActivities = async (
 
   if (employeeId) {
     andConditions.push({
-      employeeId,
+      employee: new mongoose.Types.ObjectId(employeeId),
     });
   }
 

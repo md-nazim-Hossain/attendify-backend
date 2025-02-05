@@ -10,7 +10,7 @@ const employeeDailyActivitySchema = new Schema<
   Record<string, unknown>
 >(
   {
-    employeeId: {
+    employee: {
       type: Schema.Types.ObjectId,
       required: true,
       ref: 'Employee',
@@ -32,12 +32,12 @@ const employeeDailyActivitySchema = new Schema<
 );
 
 employeeDailyActivitySchema.pre('findOne', async function (next) {
-  this.populate('employeeId');
+  this.populate('employee');
   next();
 });
 
 employeeDailyActivitySchema.pre('find', async function (next) {
-  this.populate('employeeId');
+  this.populate('employee');
   next();
 });
 

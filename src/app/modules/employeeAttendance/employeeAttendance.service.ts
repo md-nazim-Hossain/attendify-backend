@@ -35,6 +35,9 @@ const employeeCheckIn = async (
         employee: new mongoose.Types.ObjectId(payload.employee as string),
       },
       {
+        companyId: new mongoose.Types.ObjectId(companyId),
+      },
+      {
         createdAt: {
           $gte: startOfDay,
           $lt: endOfDay,
@@ -55,17 +58,21 @@ const employeeCheckIn = async (
   await EmployeeAttendance.create({
     ...payload,
     status,
+    checkInTime: DateTimeHelpers.getCurrentTime(),
+    companyId: new mongoose.Types.ObjectId(companyId),
   });
 };
 
 const employeeCheckOut = async (
   payload: string,
-  employeeId: string
+  employeeId: string,
+  companyId: string
 ): Promise<void> => {
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   const attendance = await EmployeeAttendance.findOne({
     $and: [
       { employee: new mongoose.Types.ObjectId(employeeId) },
+      { companyId: new mongoose.Types.ObjectId(companyId) },
       {
         createdAt: {
           $gte: startOfDay,
@@ -96,12 +103,14 @@ const employeeCheckOut = async (
 };
 
 const getCheckTodayIsAttendance = async (
-  employeeId: string
+  employeeId: string,
+  companyId: string
 ): Promise<IEmployeeAttendance | null> => {
   const { endOfDay, startOfDay } = DateTimeHelpers.getTodayRange();
   return await EmployeeAttendance.findOne({
     $and: [
       { employee: new mongoose.Types.ObjectId(employeeId) },
+      { companyId: new mongoose.Types.ObjectId(companyId) },
       {
         createdAt: {
           $gte: startOfDay,
@@ -113,10 +122,14 @@ const getCheckTodayIsAttendance = async (
 };
 
 const getAllMyAttendances = async (
-  employeeId: string
+  employeeId: string,
+  companyId: string
 ): Promise<IEmployeeAttendance[]> => {
   const employeeAttendance = await EmployeeAttendance.find({
-    employee: new mongoose.Types.ObjectId(employeeId),
+    $and: [
+      { employee: new mongoose.Types.ObjectId(employeeId) },
+      { companyId: new mongoose.Types.ObjectId(companyId) },
+    ],
   });
   return employeeAttendance;
 };

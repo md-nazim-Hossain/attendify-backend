@@ -13,7 +13,7 @@ const createActivity = catchAsync(async (req: Request, res: Response) => {
   const { ...activityData } = req.body;
   await EmployeeDailyActivityService.createActivity({
     ...activityData,
-    employeeId: req.employee?.employeeId,
+    employee: req.user?.employeeObjectId,
   });
   sendResponse<null>(res, {
     statusCode: StatusCodes.OK,
@@ -42,7 +42,7 @@ const getAllActivities = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getMyActivities = catchAsync(async (req: Request, res: Response) => {
-  const employeeId = req.employee?.employeeId;
+  const employeeId = req.user?.employeeObjectId;
   const pagination: IPaginationOptions = pick(req.query, paginationFields);
   const filters = pick(
     req.query,

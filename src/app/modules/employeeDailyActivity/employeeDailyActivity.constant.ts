@@ -1,5 +1,5 @@
 const employeeDailyActivitySearchFields = [
-  'employeeId',
+  'employee',
   'status',
   'reason',
   'activities',
@@ -8,7 +8,7 @@ const employeeDailyActivitySearchFields = [
 const employeeDailyActivityFilterableFields = [
   'searchTerm',
   'status',
-  'employeeId',
+  'employee',
 ];
 
 export const EmployeeDailyActivityConstant = {

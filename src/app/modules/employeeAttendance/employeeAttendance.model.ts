@@ -16,6 +16,11 @@ const employeeAttendanceSchema = new Schema<
       required: true,
       ref: 'Employee',
     },
+    companyId: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'Company',
+    },
     checkInTime: {
       type: String,
       required: true,
@@ -62,12 +67,12 @@ employeeAttendanceSchema.pre('save', async function (next) {
 });
 
 employeeAttendanceSchema.pre('find', async function (next) {
-  this.populate('employeeId');
+  this.populate('employee');
   next();
 });
 
 employeeAttendanceSchema.pre('findOne', async function (next) {
-  this.populate('employeeId');
+  this.populate('employee');
   next();
 });
 

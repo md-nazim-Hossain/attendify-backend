@@ -3,7 +3,7 @@ import { z } from 'zod';
 const checkInZodSchema = z.object({
   body: z.object({
     checkInLocation: z.string({
-      required_error: 'employeeId is required',
+      required_error: 'Location is required',
     }),
   }),
 });
@@ -11,7 +11,7 @@ const checkInZodSchema = z.object({
 const checkOutZodSchema = z.object({
   body: z.object({
     checkOutLocation: z.string({
-      required_error: 'employeeId is required',
+      required_error: 'Location is required',
     }),
   }),
 });

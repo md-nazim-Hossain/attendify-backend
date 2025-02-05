@@ -4,7 +4,7 @@ import { ENUM_ACTIVITY_STATUS } from '../../enums/employeeDailyActivity.enum';
 
 export interface IEmployeeDailyActivity {
   _id: Schema.Types.ObjectId;
-  employeeId: Schema.Types.ObjectId | IEmployee;
+  employee: Schema.Types.ObjectId | IEmployee;
   activities: string;
   reason?: string;
   status: ENUM_ACTIVITY_STATUS;
@@ -15,7 +15,7 @@ export interface IEmployeeDailyActivity {
 export interface IEmployeeDailyActivityFilters {
   searchTerm?: string;
   status?: ENUM_ACTIVITY_STATUS;
-  employeeId?: string;
+  employee?: string;
 }
 
 export type IEmployeeDailyActivityModel = Model<
